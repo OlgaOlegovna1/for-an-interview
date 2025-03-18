@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: TMS Сервис управления транспортом
+  description: API для фильтрации информации о парке транспортных средств
+  version: 1.0.0
+servers:
+  - url: https://example.com
+    description: Основной сервер API
+paths:
+  /transport/motorpool/filter:
+    get:
+      summary: Фильтрация информации о парке транспортных средств
+      description: |
+        Метод предназначен для фильтрации и получения конкретной информации о ТС, 
+        зарегистрированных в компании и готовых к эксплуатации.
+      operationId: filterMotorpool
+      parameters:
+        - name: brand
+          in: query
+          description: Марка ТС
+          required: false
+          schema:
+            type: string
+        - name: model
+          in: query
+          description: Модель ТС
+          required: false
+          schema:
+            type: string
+        - name: reg_number
+          in: query
+          description: Регистрационный номер ТС
+          required: false
+          schema:
+            type: string
+        - name: year
+          in: query
+          description: Год выпуска ТС
+          required: false
+          schema:
+            type: integer
+        - name: carrier
+          in: query
+          description: Перевозчик (компания)
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Статус ТС (Активен/Неактивен)
+          required: false
+          schema:
+            type: string
+        - name: vehicle_type
+          in: query
+          description: Тип транспортного средства
+          required: false
+          schema:
+            type: string
+        - name: volume_m3
+          in: query
+          description: Кубатура, м³
+          required: false
+          schema:
+            type: number
+            format: float
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 123
+                        brand:
+                          type: string
+                          example: Cadillac
+                        model:
+                          type: string
+                          example: STS
+                        reg_number:
+                          type: string
+                          example: A123BC
+                        year:
+                          type: integer
+                          example: 2015
+                        carrier:
+                          type: string
+                          example: ООО "ТрансЛогистик"
+                        status:
+                          type: string
+                          example: Активен
+                        vehicle_type:
+                          type: string
+                          example: Легковой
+                        volume_m3:
+                          type: number
+                          format: float
+                          example: 12.5
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Некорректные параметры запроса
+        "401":
+          description: Ошибка аутентификации
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Ошибка аутентификации. Требуется действительный токен.
+        "403":
+          description: Доступ запрещен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Доступ запрещен. У пользователя нет прав на просмотр информации о транспортных средствах.
+        "500":
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Something went wrong on our side. Please try again later.
+      security:
+        - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
